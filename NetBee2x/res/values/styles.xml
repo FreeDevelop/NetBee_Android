@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+ 	<style name="CustomLeftRadioBtn">
+    	<item name="android:button">@null</item> 
+    	<item name="android:drawableLeft">@drawable/netbee_radio</item>
+    	<item name="android:background">@drawable/netbee_left</item>
+    	<item name="android:gravity">center_vertical</item> 
+    	
+    </style>
+     <style name="CustomRightRadioBtn">
+    	<item name="android:button">@null</item> 
+    	<item name="android:drawableLeft">@drawable/netbee_radio</item>
+    	<item name="android:background">@drawable/netbee_right</item>
+       	<item name="android:gravity">center_vertical</item> 
+    </style>
+</resources> 

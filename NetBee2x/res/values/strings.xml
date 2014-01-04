@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">网络小蜜蜂</string>
+	<string name="leftbtn_text">网络监测</string>
+	<string name="rightbtn_text">后台监测</string>
+	<string name="toptbtn_text">评一评！</string>
+	<string name="bottomtbtn_text">关于我们</string>
+	<string name="compass_model_btn_text">指南针模式</string>
+    
+</resources>

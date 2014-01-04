@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+ 	<style name="CustomTopBtn_noradio">
+    	<item name="android:button">@null</item> 
+    	<item name="android:background">@drawable/betbee_top</item>
+    	<item name="android:gravity">center_vertical</item> 
+    	
+    </style>
+     <style name="CustomBottomBtn_noradio">
+    	<item name="android:button">@null</item> 
+    	<item name="android:background">@drawable/netbee_bottom</item>
+       	<item name="android:gravity">center_vertical</item> 
+    </style>
+</resources> 

@@ -1,9 +1,14 @@
 package com.example.netbee2x;
 
+import java.util.List;
+
 import android.os.Bundle;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.app.Activity;
+import android.app.ActivityManager;
+import android.app.ApplicationErrorReport.RunningServiceInfo;
+import android.content.Context;
 //import android.view.Menu;
 import android.content.Intent;
 
@@ -13,6 +18,8 @@ public class NetBee extends Activity
 	private CheckBox chNetMonitor_Btn;
 	///< 绑定属性
 	private Intent chNetMonitor_Btn_Intent;
+	///< 网络监听Service名称
+	private static String monitorServiceName = "com.example.netbee2x.NetBee_Monitor";
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) 
@@ -28,7 +35,7 @@ public class NetBee extends Activity
 		NetBee_SetListener();
 	}
 	
-	/*
+	/**
 	 * 设置监听事件
 	 */
 	private void NetBee_SetListener()
@@ -49,6 +56,11 @@ public class NetBee extends Activity
 			// TODO Auto-generated method stub
 			if (isChecked)
 			{
+				///< 如果服务正在运行，则直接返回;否则再次启动会崩溃，当然启动按钮状态应该写入配置文件...
+				if (isServiceRunning(NetBee.this, monitorServiceName))
+				{
+					return;
+				}
 				startService(chNetMonitor_Btn_Intent);
 			}
 			else
@@ -57,6 +69,30 @@ public class NetBee extends Activity
 			}
 		}	
 	};
+	
+	/**
+	 * 启动Service前，做个判断，否则容易引起崩溃
+	 * @param mContext
+	 * @param className
+	 * @return
+	 */
+	public boolean isServiceRunning(Context mContext, String className) 
+	{
+		int i;
+        ActivityManager activityManager = (ActivityManager)
+        mContext.getSystemService(Context.ACTIVITY_SERVICE); 
+        List<ActivityManager.RunningServiceInfo> serviceList = 
+        		activityManager.getRunningServices(30);
+        
+        for (i = 0; i < serviceList.size(); ++i) 
+        {
+            if (serviceList.get(i).service.getClassName().equals(className)) 
+            {
+                return true;
+            }
+        }
+        return false;
+    }
 
 	//	@Override
 	//	public boolean onCreateOptionsMenu(Menu menu) {

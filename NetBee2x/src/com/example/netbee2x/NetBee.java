@@ -3,19 +3,21 @@ package com.example.netbee2x;
 import java.util.List;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.app.Activity;
 import android.app.ActivityManager;
-import android.app.ApplicationErrorReport.RunningServiceInfo;
 import android.content.Context;
 //import android.view.Menu;
 import android.content.Intent;
+import android.content.res.Configuration;
 
 public class NetBee extends Activity 
 {
 	///< 网络监测启动按钮【关联service】
 	private CheckBox chNetMonitor_Btn;
+	
 	///< 绑定属性
 	private Intent chNetMonitor_Btn_Intent;
 	///< 网络监听Service名称
@@ -25,10 +27,30 @@ public class NetBee extends Activity
 	protected void onCreate(Bundle savedInstanceState) 
 	{
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.netbee_activity);
+		
+		if (true)
+		{
+		///< 横竖屏布局切换
+		{
+			///< 横屏
+			if (this.getResources().getConfiguration().orientation == 
+					Configuration.ORIENTATION_LANDSCAPE){ 
+				setContentView(R.layout.netbee_activity_portrait); 
+				Log.i("screen_direction", "LLLLL 横屏....");
+			} 
+			///< 竖屏
+			else if (this.getResources().getConfiguration().orientation ==
+					Configuration.ORIENTATION_PORTRAIT) { 
+				setContentView(R.layout.netbee_activity);  
+				Log.i("screen_direction", "LLLLL 竖屏....");
+			}
+		}
+		}
 		
 		///< 实例化网络监听按钮和创建一个与之相关Intent对象
 		chNetMonitor_Btn = (CheckBox)findViewById(R.id.left_button);
+		
+		///< Service Intent
 		chNetMonitor_Btn_Intent = new Intent(NetBee.this, NetBee_Monitor.class);
 		
 		///< 设置监听事件

@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.util.Log;
 import android.widget.Toast;
 
 public class NetBee_Monitor extends Service
@@ -26,6 +27,8 @@ public class NetBee_Monitor extends Service
 	private Context ctx = null;
 	///< 网络状态监测对象
 	private NetBee_NetState netState = null;
+	///< 网络状态提示音
+	private NetBee_SoundTip netSoundTip = null;
 
 	/**
 	 * 必须实现的接口，目前未使用
@@ -60,6 +63,10 @@ public class NetBee_Monitor extends Service
 		timer = new Timer();
 		timerTask = new NetMonitorTask();
 		netState = new NetBee_NetState(ctx);
+		netSoundTip = new NetBee_SoundTip(ctx);
+		
+		Log.i("screen_direction", "LLLLL service create....");
+
 	}
 
 	/**
@@ -99,15 +106,27 @@ public class NetBee_Monitor extends Service
 			{
 				if (netState.ifWifiConnected())
 				{
+					if (false == netSoundTip.netTipIsPlaying())
+					{
+						netSoundTip.netTipPlay(R.raw.bye2);
+					}
 					Toast.makeText(ctx, "已经连接上.....", Toast.LENGTH_SHORT).show();
 				}
 				else
 				{
+					if (false == netSoundTip.netTipIsPlaying())
+					{
+						netSoundTip.netTipPlay(R.raw.shuai);
+					}
 					Toast.makeText(ctx, "断开.....", Toast.LENGTH_SHORT).show();
 				}
 			}
 			else
 			{
+				if (false == netSoundTip.netTipIsPlaying())
+				{
+					netSoundTip.netTipPlay(R.raw.starts);
+				}
 				Toast.makeText(ctx, "当前网络不可用.....", Toast.LENGTH_SHORT).show();
 			}
 		}
@@ -129,7 +148,12 @@ public class NetBee_Monitor extends Service
 		{
 			timerTask.cancel();
 		}
+		if (null != netSoundTip)
+		{
+			netSoundTip.netTipStop();
+		}
 
+		Log.i("screen_direction", "LLLLL service destory....");
 		//Toast.makeText(this, "停止服务 ...", Toast.LENGTH_SHORT).show();
 	}
 }

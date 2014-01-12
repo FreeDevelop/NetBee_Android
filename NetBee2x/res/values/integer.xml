@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <integer  name="connected">1</integer>
+	<integer  name="unconnected">2</integer>
+	<integer  name="unaviliable">3</integer>
+	
+</resources>

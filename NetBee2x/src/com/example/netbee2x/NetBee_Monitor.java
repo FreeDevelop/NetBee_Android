@@ -18,7 +18,7 @@ public class NetBee_Monitor extends Service
 	///< 延迟时间和任务定时周期
 	private static long NETTASK_DELAY = 0;
 	///< 定时监测网络状态【需要优化:用户在不频繁点击监测按钮开关的情况下，可以适当延长】
-	private static long NETTASK_PERIOID = 3000;
+	private static long NETTASK_PERIOID = 4500;
 	///< 每隔5s钟timer启动timerTask一次 【千万别用static，否则用户如果频繁启动，停止，会崩溃】
 	private Timer timer = null;
 	///< 网络监测Timer任务
@@ -27,8 +27,10 @@ public class NetBee_Monitor extends Service
 	private Context ctx = null;
 	///< 网络状态监测对象
 	private NetBee_NetState netState = null;
-	///< 网络状态提示音
+	///< 网络状态提示音对象
 	private NetBee_SoundTip netSoundTip = null;
+	///< 播放哪首
+	private int netWhichSoundTip = 0;
 
 	/**
 	 * 必须实现的接口，目前未使用
@@ -65,7 +67,7 @@ public class NetBee_Monitor extends Service
 		netState = new NetBee_NetState(ctx);
 		netSoundTip = new NetBee_SoundTip(ctx);
 		
-		Log.i("screen_direction", "LLLLL service create....");
+		Log.i("monitor", "LLLLL service create....");
 
 	}
 
@@ -106,31 +108,59 @@ public class NetBee_Monitor extends Service
 			{
 				if (netState.ifWifiConnected())
 				{
-					if (false == netSoundTip.netTipIsPlaying())
-					{
-						netSoundTip.netTipPlay(R.raw.bye2);
-					}
+					netWhichSoundTip = R.integer.connected;
+					//					if (false == netSoundTip.netTipIsPlaying())
+					//					{
+					//						netSoundTip.netTipPlay(R.raw.bye2);
+					//					}
 					Toast.makeText(ctx, "已经连接上.....", Toast.LENGTH_SHORT).show();
 				}
 				else
 				{
-					if (false == netSoundTip.netTipIsPlaying())
-					{
-						netSoundTip.netTipPlay(R.raw.shuai);
-					}
+					netWhichSoundTip = R.integer.unconnected;
+					//					if (false == netSoundTip.netTipIsPlaying())
+					//					{
+					//						netSoundTip.netTipPlay(R.raw.shuai);
+					//					}
 					Toast.makeText(ctx, "断开.....", Toast.LENGTH_SHORT).show();
 				}
 			}
 			else
 			{
-				if (false == netSoundTip.netTipIsPlaying())
-				{
-					netSoundTip.netTipPlay(R.raw.starts);
-				}
+				netWhichSoundTip = R.integer.unaviliable;
+				//				if (false == netSoundTip.netTipIsPlaying())
+				//				{
+				//					netSoundTip.netTipPlay(R.raw.starts);
+				//				}
 				Toast.makeText(ctx, "当前网络不可用.....", Toast.LENGTH_SHORT).show();
 			}
+			
+			///< 根据状态播放不同的提示音
+			netTipPlayer(netWhichSoundTip);
 		}
 	};    
+	
+	/**
+	 * 播放提示音
+	 * @param whichSound
+	 */
+	public void netTipPlayer(int whichSound) 
+	{
+		switch (whichSound)
+		{
+			case R.integer.connected:
+				netSoundTip.netTipPlay(R.raw.listenbetter);
+				break;
+			case R.integer.unconnected:
+				netSoundTip.netTipPlay(R.raw.breakdown);
+				break;
+			case R.integer.unaviliable:
+				netSoundTip.netTipPlay(R.raw.breakdown);
+				break;
+			default:
+				break;
+		}
+	}
 
 	/**
 	 * stopService是被调用
@@ -153,7 +183,7 @@ public class NetBee_Monitor extends Service
 			netSoundTip.netTipStop();
 		}
 
-		Log.i("screen_direction", "LLLLL service destory....");
+		Log.i("monitor", "LLLLL service destory....");
 		//Toast.makeText(this, "停止服务 ...", Toast.LENGTH_SHORT).show();
 	}
 }

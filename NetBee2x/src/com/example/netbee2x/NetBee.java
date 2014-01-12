@@ -1,5 +1,6 @@
 package com.example.netbee2x;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import android.os.Bundle;
@@ -17,7 +18,14 @@ public class NetBee extends Activity
 {
 	///< 网络监测启动按钮【关联service】
 	private CheckBox chNetMonitor_Btn;
-	
+	///< 网络监测自启动【修改配置文件】
+	private CheckBox chNetAutoStart_Btn;
+	///< 指南针模式【重置布局、更新配置文件】
+	private CheckBox chNetCompassModel_Btn;
+	///< xml解析器
+	private NetBee_XmlTools netXml = null;
+	///< 配置信息选项【目前为三项】
+	private ArrayList<String> sArrayList = null;
 	///< 绑定属性
 	private Intent chNetMonitor_Btn_Intent;
 	///< 网络监听Service名称
@@ -28,33 +36,61 @@ public class NetBee extends Activity
 	{
 		super.onCreate(savedInstanceState);
 		
-		if (true)
-		{
-		///< 横竖屏布局切换
-		{
-			///< 横屏
-			if (this.getResources().getConfiguration().orientation == 
-					Configuration.ORIENTATION_LANDSCAPE){ 
-				setContentView(R.layout.netbee_activity_portrait); 
-				Log.i("screen_direction", "LLLLL 横屏....");
-			} 
-			///< 竖屏
-			else if (this.getResources().getConfiguration().orientation ==
-					Configuration.ORIENTATION_PORTRAIT) { 
-				setContentView(R.layout.netbee_activity);  
-				Log.i("screen_direction", "LLLLL 竖屏....");
-			}
-		}
-		}
+		///< 初始化布局和组件
+		NetBee_InitLayout();
 		
-		///< 实例化网络监听按钮和创建一个与之相关Intent对象
-		chNetMonitor_Btn = (CheckBox)findViewById(R.id.left_button);
+		///< 重置布局和组件
+		NetBee_ResetLayout();
 		
 		///< Service Intent
 		chNetMonitor_Btn_Intent = new Intent(NetBee.this, NetBee_Monitor.class);
 		
 		///< 设置监听事件
 		NetBee_SetListener();
+	}
+	
+	/**
+	 * 初始化布局和组件
+	 */
+	private void NetBee_InitLayout()
+	{
+		///< 横屏
+		if (this.getResources().getConfiguration().orientation == 
+				Configuration.ORIENTATION_LANDSCAPE){ 
+			setContentView(R.layout.netbee_activity_portrait); 
+			Log.i("screen_direction", "LLLLL 横屏....");
+		} 
+		///< 竖屏
+		else if (this.getResources().getConfiguration().orientation ==
+				Configuration.ORIENTATION_PORTRAIT) { 
+			setContentView(R.layout.netbee_activity);  
+			Log.i("screen_direction", "LLLLL 竖屏....");
+		}
+
+		///< 是否开机自启动
+		chNetAutoStart_Btn = (CheckBox)findViewById(R.id.right_button);
+		///< 实例化网络监听按钮和创建一个与之相关Intent对象
+		chNetMonitor_Btn = (CheckBox)findViewById(R.id.left_button);
+		///< 是否启动指南针模式
+		chNetCompassModel_Btn = (CheckBox)findViewById(R.id.right_top_button);
+	}
+	
+	/**
+	 * 根据配置文件重置组件状态
+	 */
+	private void NetBee_ResetLayout()
+	{
+		///< 解析用户配置文件【决定按钮的选中状态和监听状态】
+		netXml = new NetBee_XmlTools(NetBee.this, R.xml.user_choice);
+		/// 获得解析对象
+		sArrayList = netXml.getXmlInf();
+
+		///< 根据配置文件修改按钮选中状态
+		chNetAutoStart_Btn.setChecked(sArrayList.get(0).equals("yes"));
+		///< 根据配置文件修改按钮选中状态
+		chNetMonitor_Btn.setChecked(sArrayList.get(1).equals("yes"));
+		///< 根据配置文件修改按钮选中状态
+		chNetCompassModel_Btn.setChecked(sArrayList.get(3).equals("yes"));
 	}
 	
 	/**

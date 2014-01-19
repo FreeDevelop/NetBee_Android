@@ -50,6 +50,18 @@ public class NetBee extends Activity
 	}
 	
 	/**
+	 * 程序退出时调用函数，同时更新配置文件
+	 */
+	@Override
+	protected void onDestroy() {
+		// TODO Auto-generated method stub
+		///< 程序退出时配置信息写入文件
+		netXml.writeXML(sArrayList, "user_choice.xml");
+		
+		super.onDestroy();
+	}
+	
+	/**
 	 * 初始化布局和组件
 	 */
 	private void NetBee_InitLayout()
@@ -73,6 +85,13 @@ public class NetBee extends Activity
 		chNetMonitor_Btn = (CheckBox)findViewById(R.id.left_button);
 		///< 是否启动指南针模式
 		chNetCompassModel_Btn = (CheckBox)findViewById(R.id.right_top_button);
+	
+		///< 解析用户配置文件【决定按钮的选中状态和监听状态】
+		netXml = new NetBee_XmlTools(NetBee.this, R.xml.user_choice);
+		///< 更改为从sdcard读取xml配置文件，不过需要对首次进行处理【首次没有配置文件】
+		//		netXml = new NetBee_XmlTools(NetBee.this, "user_choice.xml");
+		/// 获得解析对象
+		sArrayList = netXml.getXmlInf();
 	}
 	
 	/**
@@ -80,10 +99,10 @@ public class NetBee extends Activity
 	 */
 	private void NetBee_ResetLayout()
 	{
-		///< 解析用户配置文件【决定按钮的选中状态和监听状态】
+		/*		///< 解析用户配置文件【决定按钮的选中状态和监听状态】
 		netXml = new NetBee_XmlTools(NetBee.this, R.xml.user_choice);
 		/// 获得解析对象
-		sArrayList = netXml.getXmlInf();
+		sArrayList = netXml.getXmlInf();*/
 
 		///< 根据配置文件修改按钮选中状态
 		chNetAutoStart_Btn.setChecked(sArrayList.get(0).equals("yes"));
@@ -100,6 +119,10 @@ public class NetBee extends Activity
 	{
 		///< 设置网络监听事件
 		chNetMonitor_Btn.setOnCheckedChangeListener(chNetMonitor_Btn_listener);
+		///< 设置开机启动启动监听事件
+		chNetAutoStart_Btn.setOnCheckedChangeListener(chNetAutoStart_Btn_listener);
+		///< 设置指南针模式监听事件
+		chNetCompassModel_Btn.setOnCheckedChangeListener(chNetCompassModel_Btn_listener);
 	}
 	
 	/**
@@ -110,8 +133,13 @@ public class NetBee extends Activity
 	{
 		@Override
 		public void onCheckedChanged(CompoundButton buttonView,
-				boolean isChecked) {
+				boolean isChecked) 
+		{
 			// TODO Auto-generated method stub
+			///< 更新配置信息
+			sArrayList.remove(1);
+			sArrayList.add(1, isChecked + "");
+			
 			if (isChecked)
 			{
 				///< 如果服务正在运行，则直接返回;否则再次启动会崩溃，当然启动按钮状态应该写入配置文件...
@@ -126,6 +154,38 @@ public class NetBee extends Activity
 				stopService(chNetMonitor_Btn_Intent);
 			}
 		}	
+	};
+
+	/**
+	 * 定义指南针模式监听事件方法
+	 */
+	private CompoundButton.OnCheckedChangeListener chNetCompassModel_Btn_listener = 
+			new CompoundButton.OnCheckedChangeListener() 
+	{			
+		@Override
+		public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) 
+		{
+			// TODO Auto-generated method stub
+			///< 更新配置信息
+			sArrayList.remove(3);
+			sArrayList.add(3, isChecked + "");
+		}
+	};
+	
+	/**
+	 * 定义开机自启动监听事件方法
+	 */
+	private CompoundButton.OnCheckedChangeListener chNetAutoStart_Btn_listener = 
+			new CompoundButton.OnCheckedChangeListener() 
+	{			
+		@Override
+		public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) 
+		{
+			// TODO Auto-generated method stub
+			///< 更新配置信息
+			sArrayList.remove(0);
+			sArrayList.add(0, isChecked + "");
+		}
 	};
 	
 	/**
